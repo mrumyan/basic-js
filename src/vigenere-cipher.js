@@ -1,32 +1,41 @@
-const { NotImplementedError } = require('../extensions/index.js');
-
-/**
- * Implement class VigenereCipheringMachine that allows us to create
- * direct and reverse ciphering machines according to task description
- * 
- * @example
- * 
- * const directMachine = new VigenereCipheringMachine();
- * 
- * const reverseMachine = new VigenereCipheringMachine(false);
- * 
- * directMachine.encrypt('attack at dawn!', 'alphonse') => 'AEIHQX SX DLLU!'
- * 
- * directMachine.decrypt('AEIHQX SX DLLU!', 'alphonse') => 'ATTACK AT DAWN!'
- * 
- * reverseMachine.encrypt('attack at dawn!', 'alphonse') => '!ULLD XS XQHIEA'
- * 
- * reverseMachine.decrypt('AEIHQX SX DLLU!', 'alphonse') => '!NWAD TA KCATTA'
- * 
- */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(isDirect = true) {
+    this.isDirect = isDirect;
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  algorithm(str, key, isEncrypt) {
+    if (!str || !key) {
+      throw new Error('Incorrect arguments!');
+    }
+
+    let result = '';
+    let j = 0;
+    str = str.toUpperCase();
+    key = key.toUpperCase();
+
+    for (let i = 0; i < str.length; i++) {
+      if (!str[i].match(/[A-Z]/g)) {
+        result += str[i];
+        continue;
+      }
+
+      if (isEncrypt) {
+        result += String.fromCharCode('A'.charCodeAt(0) + ((str.charCodeAt(i) + key.charCodeAt(j)) % 26)).toUpperCase();
+      } else {
+        result += String.fromCharCode('A'.charCodeAt(0) + ((str.charCodeAt(i) - key.charCodeAt(j) + 26) % 26)).toUpperCase();
+      }
+      j = j === key.length - 1 ? 0 : j + 1;
+    }
+
+    return this.isDirect ? result : result.split('').reverse().join('');
+  }
+
+  encrypt(str, key) {
+    return this.algorithm(str, key, true);
+  }
+
+  decrypt(str, key) {
+    return this.algorithm(str, key, false);
   }
 }
 
