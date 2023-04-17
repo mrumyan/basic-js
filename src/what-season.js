@@ -8,8 +8,8 @@ function getSeason(date) {
     return ERROR_MSG;
   }
 
-  if (!(date instanceof Date) || isNaN(date)) {
-    return INVALID_DATE;
+  if (!(date instanceof Date) || isNaN(Date.parse(date))) {
+    throw new Error(INVALID_DATE);
   }
 
   try {
